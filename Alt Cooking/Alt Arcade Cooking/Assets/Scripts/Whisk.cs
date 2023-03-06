@@ -7,13 +7,25 @@ public class Whisk : MonoBehaviour
 {
     [SerializeField] private int numCooldownTicks;
     [SerializeField] private float cooldownTime;
-    [SerializeField] private float rotationMultiplier;
-
+    [SerializeField] private float forceMultiplier;
+    private Rigidbody2D _rigidbody2D;
+    
     private float _numRecentTicks;
 
-    private void Update()
+    private void Awake()
+    {
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+    }
+
+    /*private void Update()
     {
         RotateClockwise(_numRecentTicks * rotationMultiplier);
+    }*/
+
+    private void FixedUpdate()
+    {
+        // Debug.Log(_numRecentTicks);
+        _rigidbody2D.AddForce(Time.deltaTime * _numRecentTicks * forceMultiplier * Vector2.up);
     }
 
     public void WhiskTick()
@@ -37,7 +49,7 @@ public class Whisk : MonoBehaviour
     }
     
     // This method takes a float parameter called angle and rotates the GameObject clockwise by that amount
-    public void RotateClockwise(float angle)
+    /*public void RotateClockwise(float angle)
     {
         // Get the current rotation of the GameObject in Euler angles
         Vector3 currentRotation = transform.eulerAngles;
@@ -47,5 +59,5 @@ public class Whisk : MonoBehaviour
         
         // Set the new rotation of the GameObject using Quaternion.Euler
         transform.rotation = Quaternion.Euler(currentRotation);
-    }
+    }*/
 }

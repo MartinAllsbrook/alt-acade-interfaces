@@ -25,9 +25,8 @@ public class SerialManager : MonoBehaviour
         
         if (value == 1)
         {
-            _stream.DiscardInBuffer();
             whisk.WhiskTick();
-            Debug.Log("tick");
+            // Debug.Log("tick");
         }
     }
 }
