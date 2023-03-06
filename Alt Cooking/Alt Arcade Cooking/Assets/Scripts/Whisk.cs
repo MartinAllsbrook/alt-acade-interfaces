@@ -9,6 +9,7 @@ public class Whisk : MonoBehaviour
     [SerializeField] private int numCooldownTicks;
     [SerializeField] private float cooldownTime;
     [SerializeField] private float forceMultiplier;
+    [SerializeField] private Animator animator;
     [SerializeField] private UI ui;
     private Rigidbody2D _rigidbody2D;
 
@@ -17,6 +18,11 @@ public class Whisk : MonoBehaviour
     private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
+    }
+
+    private void Update()
+    {
+        animator.SetFloat("Speed", _numRecentTicks);
     }
 
     private void FixedUpdate()
