@@ -14,6 +14,7 @@ public class Whisk : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private UI ui;
     [SerializeField] private float maxWait;
+    [SerializeField] private GameObject endScreen;
 
     private Rigidbody2D _rigidbody2D;
     private Stopwatch _timer;
@@ -27,11 +28,10 @@ public class Whisk : MonoBehaviour
 
     private void Update()
     {
-        animator.SetFloat("Speed", _numRecentTicks);
         if (_timer.ElapsedMilliseconds > maxWait)
-        {
             _numRecentTicks = 0;
-        }
+        
+        animator.SetFloat("Speed", _numRecentTicks);
     }
 
     private void FixedUpdate()
@@ -46,13 +46,11 @@ public class Whisk : MonoBehaviour
             _numRecentTicks = 0;
         _timer.Reset();
         _timer.Start();
-        Debug.Log(_numRecentTicks);
-        // _numRecentTicks++;
-        // StartCoroutine(WaitAndRemoveTick());
     }
 
     /*private IEnumerator WaitAndRemoveTick()
     {
+        _numRecentTicks++;
         float cooldownTickStrength = (float) 1 / numCooldownTicks;
         float cooldownTickLength = cooldownTime / numCooldownTicks;
         
@@ -71,6 +69,14 @@ public class Whisk : MonoBehaviour
             ui.AddSalami();
 
         if (col.gameObject.CompareTag("Cucumber"))
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            StartCoroutine(EndGame());
+    }
+
+    IEnumerator EndGame()
+    {
+        endScreen.SetActive(true);
+        yield return new WaitForSeconds(7f);
+        endScreen.SetActive(false);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
