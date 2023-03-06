@@ -8,6 +8,7 @@ public class Obstacle : MonoBehaviour
 {
     [SerializeField] private float minSpeed;
     [SerializeField] private float maxSpeed;
+    [SerializeField] private GameObject particleSystem;
     
     private Rigidbody2D _rigidbody2D;
 
@@ -24,7 +25,15 @@ public class Obstacle : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.CompareTag("Player") || col.gameObject.CompareTag("Wall"))
+        if (col.gameObject.CompareTag("Player"))
+        {
             Destroy(gameObject);
+            Instantiate(particleSystem, transform.position, new Quaternion(0, 0, 0, 0));
+        }
+
+        if (col.gameObject.CompareTag("Wall"))
+        {
+            Destroy(gameObject);
+        }
     }
 }
