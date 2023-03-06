@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 public class ObstacleSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject obstacle;
+    [SerializeField] private GameObject[] objects;
     [SerializeField] private float maxHeight;
     [SerializeField] private float minHeight;
     [SerializeField] private float maxWait;
@@ -21,9 +21,11 @@ public class ObstacleSpawner : MonoBehaviour
     {
         while(true)
         {
+            GameObject toSpawn = objects[Random.Range(0, objects.Length)];
+            
             Vector2 spawnPosition = new Vector2(20, Random.Range(minHeight, maxHeight));
             Quaternion rotation = GetRandomQuaternionXY();
-            Instantiate(obstacle, spawnPosition, rotation);
+            Instantiate(toSpawn, spawnPosition, rotation);
 
             float waitTime = Random.Range(minWait, maxWait);
             yield return new WaitForSeconds(waitTime);

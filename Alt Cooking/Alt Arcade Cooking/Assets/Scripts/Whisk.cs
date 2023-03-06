@@ -2,14 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Whisk : MonoBehaviour
 {
     [SerializeField] private int numCooldownTicks;
     [SerializeField] private float cooldownTime;
     [SerializeField] private float forceMultiplier;
+    [SerializeField] private UI ui;
     private Rigidbody2D _rigidbody2D;
-    
+
     private float _numRecentTicks;
 
     private void Awake()
@@ -17,14 +19,8 @@ public class Whisk : MonoBehaviour
         _rigidbody2D = GetComponent<Rigidbody2D>();
     }
 
-    /*private void Update()
-    {
-        RotateClockwise(_numRecentTicks * rotationMultiplier);
-    }*/
-
     private void FixedUpdate()
     {
-        // Debug.Log(_numRecentTicks);
         _rigidbody2D.AddForce(Time.deltaTime * _numRecentTicks * forceMultiplier * Vector2.up);
     }
 
@@ -47,17 +43,13 @@ public class Whisk : MonoBehaviour
 
         yield return null;
     }
-    
-    // This method takes a float parameter called angle and rotates the GameObject clockwise by that amount
-    /*public void RotateClockwise(float angle)
+
+    private void OnCollisionEnter2D(Collision2D col)
     {
-        // Get the current rotation of the GameObject in Euler angles
-        Vector3 currentRotation = transform.eulerAngles;
-        
-        // Add the angle parameter to the z component of the current rotation
-        currentRotation.z += angle;
-        
-        // Set the new rotation of the GameObject using Quaternion.Euler
-        transform.rotation = Quaternion.Euler(currentRotation);
-    }*/
+        if (col.gameObject.CompareTag("Salami"))
+            ui.AddSalami();
+
+        if (col.gameObject.CompareTag("Cucumber"))
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 }

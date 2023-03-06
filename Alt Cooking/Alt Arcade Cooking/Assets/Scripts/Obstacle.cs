@@ -21,4 +21,10 @@ public class Obstacle : MonoBehaviour
     {
         _rigidbody2D.velocity = new Vector2(-Random.Range(minSpeed, maxSpeed), 0);
     }
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.CompareTag("Player") || col.gameObject.CompareTag("Wall"))
+            Destroy(gameObject);
+    }
 }
