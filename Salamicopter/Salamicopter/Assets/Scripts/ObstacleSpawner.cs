@@ -23,7 +23,7 @@ public class ObstacleSpawner : MonoBehaviour
         {
             GameObject toSpawn = objects[Random.Range(0, objects.Length)];
             
-            Vector2 spawnPosition = new Vector2(20, Random.Range(minHeight, maxHeight));
+            Vector2 spawnPosition = new Vector2(25, Random.Range(minHeight, maxHeight));
             Quaternion rotation = GetRandomQuaternionXY();
             Instantiate(toSpawn, spawnPosition, rotation);
 
