@@ -1,28 +1,37 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
 
 public class Whisk : MonoBehaviour
 {
-    [SerializeField] private int numCooldownTicks;
-    [SerializeField] private float cooldownTime;
+    // [SerializeField] private int numCooldownTicks;
+    // [SerializeField] private float cooldownTime;
     [SerializeField] private float forceMultiplier;
     [SerializeField] private Animator animator;
     [SerializeField] private UI ui;
-    private Rigidbody2D _rigidbody2D;
+    [SerializeField] private float maxWait;
 
+    private Rigidbody2D _rigidbody2D;
+    private Stopwatch _timer;
     private float _numRecentTicks;
 
     private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
+        _timer = new Stopwatch();
     }
 
     private void Update()
     {
         animator.SetFloat("Speed", _numRecentTicks);
+        if (_timer.ElapsedMilliseconds > maxWait)
+        {
+            _numRecentTicks = 0;
+        }
     }
 
     private void FixedUpdate()
@@ -32,11 +41,17 @@ public class Whisk : MonoBehaviour
 
     public void WhiskTick()
     {
-        _numRecentTicks++;
-        StartCoroutine(WaitAndRemoveTick());
+        _numRecentTicks = maxWait - _timer.ElapsedMilliseconds;
+        if (_numRecentTicks < 0)
+            _numRecentTicks = 0;
+        _timer.Reset();
+        _timer.Start();
+        Debug.Log(_numRecentTicks);
+        // _numRecentTicks++;
+        // StartCoroutine(WaitAndRemoveTick());
     }
 
-    private IEnumerator WaitAndRemoveTick()
+    /*private IEnumerator WaitAndRemoveTick()
     {
         float cooldownTickStrength = (float) 1 / numCooldownTicks;
         float cooldownTickLength = cooldownTime / numCooldownTicks;
@@ -48,7 +63,7 @@ public class Whisk : MonoBehaviour
         }
 
         yield return null;
-    }
+    }*/
 
     private void OnCollisionEnter2D(Collision2D col)
     {

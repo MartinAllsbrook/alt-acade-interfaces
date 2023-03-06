@@ -20,7 +20,7 @@ public class SerialManager : MonoBehaviour
     void Update()
     {
         var serialIn = _stream.ReadLine();
-        Debug.Log(serialIn);
+        // Debug.Log(serialIn);
         int value = int.Parse(serialIn);
         
         if (value == 1)
