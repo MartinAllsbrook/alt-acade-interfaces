@@ -75,7 +75,7 @@ public class Whisk : MonoBehaviour
     IEnumerator EndGame()
     {
         endScreen.SetActive(true);
-        yield return new WaitForSeconds(7f);
+        yield return new WaitForSeconds(4f);
         endScreen.SetActive(false);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
