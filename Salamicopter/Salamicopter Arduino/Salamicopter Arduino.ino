@@ -29,15 +29,10 @@ void loop() {
   else if (reading < lowThreshold && sent)
   {
     sent = false;
-    flash();
     value = 1;
   } 
 
-  Serial.println(value);
-}
+  delay(20);
 
-void flash() {
-  digitalWrite(indicatorLEDPin, HIGH); // turn on led
-  delay(100); // wait for 100ms
-  digitalWrite(indicatorLEDPin, LOW); // turn off led
+  Serial.println(value);
 }

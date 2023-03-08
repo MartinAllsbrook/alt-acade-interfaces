@@ -14,6 +14,7 @@ public class SerialManager : MonoBehaviour
     void Start()
     {
         _stream.Open(); //Open the Serial Stream.
+        _stream.ReadTimeout = 25;
     }
 
     // Update is called once per frame
@@ -26,7 +27,7 @@ public class SerialManager : MonoBehaviour
         if (value == 1)
         {
             whisk.WhiskTick();
-            // Debug.Log("tick");
+            Debug.Log("tick");
         }
     }
 }
