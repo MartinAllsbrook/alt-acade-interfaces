@@ -30,7 +30,7 @@ void setup() {
 }
 
 void loop() {
-  if (started == true) {
+  if (started) {
     OnStarted();
   } else {
     CountDown();
@@ -43,17 +43,17 @@ void OnStarted(){
   Serial.println("1: " + ply1In);
   Serial.println("2: " + ply2In);
 
-  if (ply1In == HIGH && ply2In == LOW){
+  if (ply1In && !ply2In) {
     PlayerWin(0);
     PlayerLoose(1);
     delay(2000);
   }
-  else if (ply1In == LOW && ply2In == HIGH){
+  else if (!ply1In && ply2In){
     PlayerWin(1);
     PlayerLoose(0);
     delay(2000);
   }
-  else if (ply1In == HIGH && ply2In == HIGH){
+  else if (ply1In && ply2In){
     Serial.println("TIE");
   }
   else {
