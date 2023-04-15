@@ -1,11 +1,11 @@
 const int redLedPins[2][5] = {
-  {50, 49, 46, 45, 42},
-  {24, 27, 28, 31, 32}
+  {53, 52, 51, 50, 49},
+  {22, 23, 24, 25, 26}
 };
 
-const int greenLeds[2] = {41, 35};
+const int greenLeds[2] = {48, 27};
 
-const int playerIn[2] = {53, 23};
+const int playerIn[2] = {47, 28};
 
 bool started = false;
 
@@ -40,8 +40,8 @@ void loop() {
 void OnStarted(){
   int ply1In = digitalRead(playerIn[0]);
   int ply2In = digitalRead(playerIn[1]);
-  Serial.println("1: " + ply1In);
-  Serial.println("2: " + ply2In);
+  Serial.println(ply1In);
+  Serial.println(ply2In);
 
   if (ply1In && !ply2In) {
     PlayerWin(0);
@@ -63,7 +63,7 @@ void OnStarted(){
 
 void PlayerWin(int player) {
   digitalWrite(greenLeds[player], HIGH);
-  digitalWrite(greenLeds[!player], HIGH);
+  digitalWrite(greenLeds[!player], LOW);
   Serial.println("Win: " + player);
   started = false;
 }
