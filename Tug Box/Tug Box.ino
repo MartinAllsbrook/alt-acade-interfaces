@@ -12,7 +12,14 @@ const int greenLeds[2] = {48, 27};
 
 const int playerIn[2] = {47, 28};
 
+// Time
+const long oneSecond = 1000;
+const long randomTime = 0;
+
+long lastMillis = 0;
+
 bool started = false;
+int redLedStage = 0;
 int playerScores[2] = {0, 0};
 
 void setup() {
@@ -28,26 +35,26 @@ void setup() {
     }
   }
 
-  for(int i = 0; i < 2; i++) {
-    for(int j = 0; j < 7; j++) {
-      digitalWrite(scoreBoardPins[i][j], LOW);
-    }
-  }
-
-  // drawNum(0, 3);
-  // drawNum(1, 2);
-
   pinMode(greenLeds[0], OUTPUT);
   pinMode(greenLeds[1], OUTPUT);
 
   pinMode(playerIn[0], INPUT);
   pinMode(playerIn[1], INPUT);
 
+  // Code for testing scoreboards
+  for(int i = 0; i < 2; i++) {
+    for(int j = 0; j < 7; j++) {
+      digitalWrite(scoreBoardPins[i][j], LOW);
+    }
+  }
+
   randomSeed(analogRead(5)); // Randomize using noise from analog pin 5
+  long randomTime = random(1000, 3000); // Set random time
 
   Serial.begin(9600); // Start serial
 
-  CountDown();
+  setLedsLow();
+  lastMillis = millis;  
 }
 
 void loop() {
@@ -61,8 +68,8 @@ void loop() {
 void OnStarted(){
   int ply1In = digitalRead(playerIn[0]);
   int ply2In = digitalRead(playerIn[1]);
-  Serial.println(ply1In);
-  Serial.println(ply2In);
+  // Serial.println(ply1In);
+  // Serial.println(ply2In);
 
   if (ply1In && !ply2In) {
     PlayerWin(0);
@@ -119,37 +126,49 @@ void PlayerWin(int player) {
 }
 
 void PlayerLoose(int player) {
-  SetRow(player, HIGH);
-  SetRow(!player, LOW);
+  setRedPlayer(player, HIGH);
+  setRedPlayer(!player, LOW);
   Serial.println("Loose: " + player);
 }
 
-void CountDown(){
-  SetRow(0, LOW);
-  SetRow(1, LOW);
+void setLedsLow(){
+  setRedPlayer(0, LOW);
+  setRedPlayer(1, LOW);
   digitalWrite(greenLeds[0], LOW);
-  digitalWrite(greenLeds[1], LOW);
-
-  for(int i = 0; i < 5; i++){
-    delay(1000);
-    SetColumn(i, HIGH);
-  }
-
-  long randomTime = random(1000, 3000);
-  delay(randomTime);
-  digitalWrite(greenLeds[0], HIGH);
-  digitalWrite(greenLeds[1], HIGH);
-  SetRow(0, LOW);
-  SetRow(1, LOW); 
-  started = true;
+  digitalWrite(greenLeds[1], LOW);  
 }
 
-void SetColumn(int col, uint8_t val){
+void CountDown(){
+  long currentMillis = millis();
+  // Serial.println(currentMillis);
+
+  // If not at last stage of red leds, activate more red leds
+  if (redLedStage < 5){
+    if (currentMillis - lastMillis > oneSecond){
+      lastMillis = currentMillis;
+      redLedStage++;
+      setRedColumn(redLedStage - 1, HIGH);
+      Serial.print("redLedStage: ");
+      Serial.println(redLedStage);
+    }
+  }
+
+  // Once random time is over turn on green leds and set game to start
+  else if (currentMillis - lastMillis > randomTime){
+    digitalWrite(greenLeds[0], HIGH);
+    digitalWrite(greenLeds[1], HIGH);
+    setRedPlayer(0, LOW);
+    setRedPlayer(1, LOW); 
+    started = true;    
+  }
+}
+
+void setRedColumn(int col, uint8_t val){
   digitalWrite(redLedPins[0][col], val);
   digitalWrite(redLedPins[1][col], val);
 }
 
-void SetRow(int row, uint8_t val){
+void setRedPlayer(int row, uint8_t val){
   for (int i = 0; i < 5; i++){
     digitalWrite(redLedPins[row][i], val);
   }
