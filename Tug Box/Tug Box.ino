@@ -14,8 +14,7 @@ const int playerIn[2] = {47, 28};
 
 // Time
 const long oneSecond = 1000;
-const long randomTime = 0;
-
+long randomTime = 0;
 long lastMillis = 0;
 
 bool started = false;
@@ -49,7 +48,7 @@ void setup() {
   }
 
   randomSeed(analogRead(5)); // Randomize using noise from analog pin 5
-  long randomTime = random(1000, 3000); // Set random time
+  randomTime = random(1000, 3000); // Set random time
 
   Serial.begin(9600); // Start serial
 
