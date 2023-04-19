@@ -158,11 +158,14 @@ void countDown(){
   long currentMillis = millis(); // Get current millis
 
   // Check for premature pulls
-  // int player1Resting = digitalRead(player1Start);
-  // int player2Resting = digitalRead(player2Start);
-  // if(!player1Resting && player2Resting){
-  //   PlayerWin
-  // }
+  int player1Resting = digitalRead(playerStart[0]);
+  int player2Resting = digitalRead(playerStart[1]);
+  Serial.println(player2Resting);
+  if(!player1Resting && player2Resting){
+    PlayerWin(1);
+  } else if (player1Resting && !player2Resting){
+    PlayerWin(0);
+  }
 
   // If not at last stage of red leds, activate more red leds
   if (redLedStage < 5){
