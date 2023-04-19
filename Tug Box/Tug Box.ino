@@ -26,6 +26,7 @@ int player1In = 0;
 int player2In = 0;
 
 void setup() {
+  // Set Output Pins
   for(int i = 0; i < 2; i++) {
     for(int j = 0; j < 5; j++) {
       pinMode(redLedPins[i][j], OUTPUT);
@@ -41,6 +42,9 @@ void setup() {
   pinMode(greenLeds[0], OUTPUT);
   pinMode(greenLeds[1], OUTPUT);
 
+  // Set Input Pins
+  pinMode(playerStart[0], INPUT);
+  pinMode(playerStart[1], INPUT);
   pinMode(playerEnd[0], INPUT);
   pinMode(playerEnd[1], INPUT);
 
@@ -65,10 +69,10 @@ void loop() {
   player1In = digitalRead(playerEnd[0]);
   player2In = digitalRead(playerEnd[1]);
 
-  Serial.print("Player One Input: ");
-  Serial.println(player1In);
-  Serial.print("Player Two Input: ");
-  Serial.println(player2In);
+  // Serial.print("Player One Input: ");
+  // Serial.println(player1In);
+  // Serial.print("Player Two Input: ");
+  // Serial.println(player2In);
 
   if (started) {
     OnStarted();
@@ -80,15 +84,9 @@ void loop() {
 void OnStarted(){
   if (player1In && !player2In) {
     PlayerWin(0);
-    PlayerLoose(1);
-    delay(2000);
-    resetGame();
   }
   else if (!player1In && player2In){
     PlayerWin(1);
-    PlayerLoose(0);
-    delay(2000);
-    resetGame();
   }
   else if (player1In && player2In){
     Serial.println("TIE");
@@ -134,17 +132,19 @@ void drawNum(int player, int number) {
 void PlayerWin(int player) {
   digitalWrite(greenLeds[player], HIGH);
   digitalWrite(greenLeds[!player], LOW);
+  setRedPlayer(!player, HIGH);
+  setRedPlayer(player, LOW);
 
   playerScores[player]++;
   drawNum(player, playerScores[player]);
   
-  Serial.println("Win: " + player);
-}
+  Serial.print("Win: ");
+  Serial.println(player);
+  Serial.print("Loose: ");
+  Serial.println(!player);
 
-void PlayerLoose(int player) {
-  setRedPlayer(player, HIGH);
-  setRedPlayer(!player, LOW);
-  Serial.println("Loose: " + player);
+  delay(2000);
+  resetGame();
 }
 
 void setLedsLow(){
@@ -157,7 +157,12 @@ void setLedsLow(){
 void countDown(){
   long currentMillis = millis(); // Get current millis
 
-  // Check for premature pulls 
+  // Check for premature pulls
+  // int player1Resting = digitalRead(player1Start);
+  // int player2Resting = digitalRead(player2Start);
+  // if(!player1Resting && player2Resting){
+  //   PlayerWin
+  // }
 
   // If not at last stage of red leds, activate more red leds
   if (redLedStage < 5){
