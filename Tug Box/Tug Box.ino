@@ -10,7 +10,8 @@ const int scoreBoardPins[2][7] = {
 
 const int greenLeds[2] = {48, 27};
 
-const int playerIn[2] = {47, 28};
+const int playerStart[2] = {4, 2};
+const int playerEnd[2] = {5, 3};
 
 // Time
 const long oneSecond = 1000;
@@ -20,6 +21,9 @@ long lastMillis = 0;
 bool started = false;
 int redLedStage = 0;
 int playerScores[2] = {0, 0};
+
+int player1In = 0;
+int player2In = 0;
 
 void setup() {
   for(int i = 0; i < 2; i++) {
@@ -37,15 +41,15 @@ void setup() {
   pinMode(greenLeds[0], OUTPUT);
   pinMode(greenLeds[1], OUTPUT);
 
-  pinMode(playerIn[0], INPUT);
-  pinMode(playerIn[1], INPUT);
+  pinMode(playerEnd[0], INPUT);
+  pinMode(playerEnd[1], INPUT);
 
   // Code for testing scoreboards
-  for(int i = 0; i < 2; i++) {
-    for(int j = 0; j < 7; j++) {
-      digitalWrite(scoreBoardPins[i][j], LOW);
-    }
-  }
+  // for(int i = 0; i < 2; i++) {
+  //   for(int j = 0; j < 7; j++) {
+  //     digitalWrite(scoreBoardPins[i][j], LOW);
+  //   }
+  // }
 
   randomSeed(analogRead(5)); // Randomize using noise from analog pin 5
   randomTime = random(1000, 3000); // Set random time
@@ -57,35 +61,49 @@ void setup() {
 }
 
 void loop() {
+  // Get player inputs
+  player1In = digitalRead(playerEnd[0]);
+  player2In = digitalRead(playerEnd[1]);
+
+  Serial.print("Player One Input: ");
+  Serial.println(player1In);
+  Serial.print("Player Two Input: ");
+  Serial.println(player2In);
+
   if (started) {
     OnStarted();
   } else {
-    CountDown();
+    countDown();
   }
 }
 
 void OnStarted(){
-  int ply1In = digitalRead(playerIn[0]);
-  int ply2In = digitalRead(playerIn[1]);
-  // Serial.println(ply1In);
-  // Serial.println(ply2In);
-
-  if (ply1In && !ply2In) {
+  if (player1In && !player2In) {
     PlayerWin(0);
     PlayerLoose(1);
     delay(2000);
+    resetGame();
   }
-  else if (!ply1In && ply2In){
+  else if (!player1In && player2In){
     PlayerWin(1);
     PlayerLoose(0);
     delay(2000);
+    resetGame();
   }
-  else if (ply1In && ply2In){
+  else if (player1In && player2In){
     Serial.println("TIE");
   }
   else {
 
   }
+}
+
+void resetGame(){
+  started = false;
+  redLedStage = 0;
+  playerScores[0] = 0;
+  playerScores[1] = 0;
+  setLedsLow();
 }
 
 void drawNum(int player, int number) {
@@ -121,7 +139,6 @@ void PlayerWin(int player) {
   drawNum(player, playerScores[player]);
   
   Serial.println("Win: " + player);
-  started = false;
 }
 
 void PlayerLoose(int player) {
@@ -137,18 +154,17 @@ void setLedsLow(){
   digitalWrite(greenLeds[1], LOW);  
 }
 
-void CountDown(){
-  long currentMillis = millis();
-  // Serial.println(currentMillis);
+void countDown(){
+  long currentMillis = millis(); // Get current millis
+
+  // Check for premature pulls 
 
   // If not at last stage of red leds, activate more red leds
   if (redLedStage < 5){
     if (currentMillis - lastMillis > oneSecond){
-      lastMillis = currentMillis;
+      lastMillis = currentMillis; // Reset lastMillis
       redLedStage++;
       setRedColumn(redLedStage - 1, HIGH);
-      Serial.print("redLedStage: ");
-      Serial.println(redLedStage);
     }
   }
 
