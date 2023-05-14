@@ -5,10 +5,10 @@ const int scoreBoardPins[2][7] = {
   {35, 34, 33, 32, 31, 30, 29}
 };
 
-const int greenLeds[2] = {48, 27};
+const int greenLeds[2] = {2, 25};
 
-const int playerStart[2] = {4, 2};
-const int playerEnd[2] = {5, 3};
+const int playerStart[2] = {12, 9};
+const int playerEnd[2] = {11, 8};
 
 // Time
 const long oneSecond = 1000;
@@ -21,6 +21,8 @@ int playerScores[2] = {0, 0};
 
 int player1In = 0;
 int player2In = 0;
+
+bool playersReady = false;
 
 void setup() {
   // Set Output Pins
@@ -50,9 +52,6 @@ void setup() {
   //   }
   // }
 
-  drawNum(0, 7);
-  drawNum(1, 9);
-
   for(int i = 0; i < 5; i++) {
     // digitalWrite(redLedPins[i], HIGH);
   }
@@ -63,24 +62,33 @@ void setup() {
   Serial.begin(9600); // Start serial
 
   setLedsLow();
+  drawNum(0, 0);
+  drawNum(1, 0);
   lastMillis = millis;  
 }
 
 void loop() {
-//   // Get player inputs
-//   player1In = digitalRead(playerEnd[0]);
-//   player2In = digitalRead(playerEnd[1]);
+  // Get player inputs
+  player1In = digitalRead(playerEnd[0]);
+  player2In = digitalRead(playerEnd[1]);
 
-//   // Serial.print("Player One Input: ");
-//   // Serial.println(player1In);
-//   // Serial.print("Player Two Input: ");
-//   // Serial.println(player2In);
+  // Serial.print("Player One Input: ");
+  // Serial.println(player1In);
+  // Serial.print("Player Two Input: ");
+  // Serial.println(player2In);
 
-//   if (started) {
-//     OnStarted();
-//   } else {
-//     countDown();
-//   }
+  if (started) {
+    OnStarted();
+  } else {
+    countDown();
+  }
+}
+
+void waitForPlayersReady(){
+  Serial.println(playerStart[0]);
+  if(playerStart[0] && playerStart[1]){
+    playersReady = true;
+  }
 }
 
 void OnStarted(){
@@ -99,10 +107,11 @@ void OnStarted(){
 }
 
 void resetGame(){
+  playersReady = false;
   started = false;
   redLedStage = 0;
-  playerScores[0] = 0;
-  playerScores[1] = 0;
+  // playerScores[0] = 0;
+  // playerScores[1] = 0;
   setLedsLow();
 }
 
@@ -186,15 +195,31 @@ void PlayerWin(int player) {
   digitalWrite(greenLeds[player], HIGH);
   digitalWrite(greenLeds[!player], LOW);
 
-  playerScores[player]++;
+  playerScores[player] += 1;
   drawNum(player, playerScores[player]);
-  
-  Serial.print("Win: ");
-  Serial.println(player);
-  Serial.print("Loose: ");
-  Serial.println(!player);
 
   delay(2000);
+  if (playerScores[player] >= 3){
+    endGame(player);
+  }else{
+    resetGame();
+  }
+}
+
+void endGame(int player){
+  for(int i = 0; i < 5; i++){
+    digitalWrite(greenLeds[player], LOW);
+    delay(250);
+    digitalWrite(greenLeds[player], HIGH);
+    delay(250);
+  }
+
+  playerScores[0] = 0;
+  playerScores[1] = 0;\
+
+  drawNum(0, 0);
+  drawNum(1, 0);
+
   resetGame();
 }
 
@@ -210,7 +235,6 @@ void countDown(){
   // Check for premature pulls
   int player1Resting = digitalRead(playerStart[0]);
   int player2Resting = digitalRead(playerStart[1]);
-  Serial.println(player2Resting);
   if(!player1Resting && player2Resting){
     PlayerWin(1);
   } else if (player1Resting && !player2Resting){
